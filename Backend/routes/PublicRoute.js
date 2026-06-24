@@ -5,6 +5,9 @@ const Company = require("../models/Company");
 const asyncWrap = require("../utils/asyncWrap");
 const ExpressError = require("../utils/ExpressError");
 const Charity = require("../models/Charity");
+const User = require("../models/User");
+const isAuthenticated = require("../middlewares/isAuthenticated");
+
 
 router.get("/winners",asyncWrap(async(req,res,next)=>{
     const company = await Company.findOne({});
@@ -19,6 +22,15 @@ router.get("/charities",asyncWrap(async(req,res,next)=>{
     const charities = await Charity.find({});
     res.send({charities});
 }));
+
+router.get("/user",isAuthenticated,asyncWrap(async(req,res,next)=>{
+    const {userId} = req.data;
+    const user = await User.findById(userId);
+    if(!user){
+        return next(new ExpressError("no user found", 404));
+    }
+    res.send({user});
+}))
 
 
 
