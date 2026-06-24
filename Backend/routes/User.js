@@ -75,12 +75,23 @@ router.post("/login",loginSchemaValidation,asyncWrap(async (req,res,next)=>{
 
 router.put("/charity/:charityName",isAuthenticated,isSubscriber,asyncWrap(async (req,res,next)=>{
     let {charityName} = req.params;
+    const {userId} = req.data;
+    const subscription = await Subscription.findOne({userId});
+    if(subscription && subscription.donationMade){
+        return next(new ExpressError("Already donated, new charity addition not allowed.",400));
+    }
     const charity = await Charity.findOne({name:charityName});
     if(!charity){
         return next(new ExpressError("Charity not found",404));
     }
-    const {userId} = req.data;
     await User.findByIdAndUpdate(userId,{charityId:charity._id},{new:true, runValidators:true});
+    const amount = subscription.amount;
+    const charityPercentage = subscription.charityPercentage;
+    const donationAmt = (charityPercentage/100)*amount;
+    charity.totalDonation += donationAmt;
+    await charity.save();
+    subscription.donationMade = true;
+    await subscription.save();
     res.send({message:"Charity Added"});
 }));
 

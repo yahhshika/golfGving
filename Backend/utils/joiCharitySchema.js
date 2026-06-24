@@ -20,4 +20,5 @@ const charitySchema = Joi.object({
         .optional()
 });
 
+
 module.exports = {charitySchema};

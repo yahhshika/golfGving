@@ -7,6 +7,7 @@ const express = require("express");
 const app = express();
 const UserRouter = require("./routes/User");
 const AdminRouter = require("./routes/Admin");
+const WinnerRouter = require("./routes/PublicRoute");
 const ExpressError = require("./utils/ExpressError");
 const PORT = 8080;
 
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use("/api/user/",UserRouter);
 app.use("/api/admin/",AdminRouter);
+app.use("/api/public/",WinnerRouter);
 app.use((req,res,next)=>{
     throw new ExpressError("Page not found", 401);
 })

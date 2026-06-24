@@ -35,6 +35,10 @@ const subscriptionSchema = new mongoose.Schema({
         default:10,
         min:10,
         max:30
+    },
+    donationMade:{
+        type:Boolean,
+        default:false
     }
 },{
     timestamps:true
