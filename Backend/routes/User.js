@@ -47,6 +47,12 @@ router.post("/signup",signUpSchemaValidation,asyncWrap(async(req,res,next)=>{
 
     const finalUser = newUser.toObject();
     delete finalUser.password;
+    res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
     res.send({message:"User Signup Successful!", user: finalUser, token:token});
 
 }));
@@ -69,6 +75,12 @@ router.post("/login",loginSchemaValidation,asyncWrap(async (req,res,next)=>{
     const token  = jsonwebtoken.sign(data, process.env.JWT_SECRET);
     const finalUser = existingUser.toObject();
     delete finalUser.password;
+    res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
     res.send({message:"User Login Successful!", user:finalUser, token});
 }));
 

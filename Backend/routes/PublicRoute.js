@@ -18,6 +18,8 @@ router.get("/winners",asyncWrap(async(req,res,next)=>{
 router.get("/charities",asyncWrap(async(req,res,next)=>{
     const charities = await Charity.find({});
     res.send({charities});
-}))
+}));
+
+
 
 module.exports = router;

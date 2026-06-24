@@ -54,6 +54,12 @@ router.post("/login",validateAdminLoginSchema, asyncWrap(async(req,res,next)=>{
     const token = jsonwebtoken.sign(data, process.env.JWT_SECRET);
     const finalAdminData = existingAdmin.toObject();
     delete finalAdminData.password;
+    res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
     res.send({message:"login successful", user:finalAdminData, token});
 }));
 
@@ -336,5 +342,9 @@ router.post("/charity",isAuthenticated, isAdmin,charitySchemaValidation,asyncWra
     res.send({message:"Charity Added"});
     
 }));
-
+router.delete("/charity/:charityName", isAuthenticated, isAdmin,asyncWrap(async(req,res,next)=>{
+    const {charityName} = req.params;
+    await Charity.findOneAndDelete({name:charityName});
+    res.send({message:"charity removal successful"});
+}))
 module.exports = router;
