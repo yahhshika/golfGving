@@ -12,6 +12,7 @@ const {subscriptionSchemaValidate} = require("../middlewares/subscription/subscr
 const Subscription = require("../models/Subscription");
 const Company = require("../models/Company");
 const { isAdmin } = require("../middlewares/admin/admin");
+const Winner = require("../models/Winner");
 
 
 router.get("/",isAuthenticated,asyncWrap(async(req,res,next)=>{
@@ -236,6 +237,12 @@ router.put("/score/:scoreId", isAuthenticated, isSubscriber,scoreSchemaValidatio
     targetScore.score = score;
     await user.save();
     res.send({message:"Score Edit Successful", scores:user.scores});
+}));
+
+router.get("/winninghistory",isAuthenticated,asyncWrap(async(req,res,next)=>{
+    const {userId} = req.data;
+    const winnings = await Winner.find({userId}).populate("drawId");
+    res.send({winnings});
 }));
 
 
