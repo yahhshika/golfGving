@@ -11,5 +11,19 @@ const adminSchema = Joi.object({
         .required(),
     
 }).required();
+const adminSchemaSignUp = Joi.object({
+    email: Joi.string()
+        .email()
+        .required(),
 
-module.exports = {adminSchema};
+    password: Joi.string()
+        .min(6)
+        .max(128)
+        .required(),
+    name:Joi.string()
+        .min(2)
+        .required()
+    
+}).required();
+
+module.exports = {adminSchema, adminSchemaSignUp};

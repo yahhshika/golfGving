@@ -9,6 +9,8 @@ import {
   FaEyeSlash,
   FaShieldAlt,
 } from "react-icons/fa";
+import api from "../../api/axios";
+import { toast } from "react-toastify";
 
 export default function NewAdmin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,11 +28,26 @@ export default function NewAdmin() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
+    try{
+      const response = await api.post("/admin",formData);
+      if(response?.data?.message){
+        toast.success(response.data.message);
+      }
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+      })
+    }catch(err){
+      console.log("error in resgitering new admin frontend");
+      console.log(err.response?.data?.message);
+      if(err.response?.data?.message){
+        toast.error(err.response.data.message);
+      }
+    }
 
-    // TODO: Connect API here
-    console.log(formData);
   };
 
   return (

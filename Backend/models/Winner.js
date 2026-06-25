@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const mongoose = require("mongoose");
 
 const winnerSchema = new mongoose.Schema({
@@ -5,6 +6,10 @@ const winnerSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
         required:true
+    },
+    name:{
+        type:String,
+        required: true
     },
     drawId:{
         type:mongoose.Schema.Types.ObjectId,

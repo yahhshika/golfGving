@@ -1,9 +1,14 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import UserContext from "../contexts/user/UserContext";
+import { Link, useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
-
+import { toast } from "react-toastify";
+import api from "../api/axios";
 export default function SignUp() {
+  const navigate = useNavigate();
+  let {user, setUser} = useContext(UserContext);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -19,10 +24,27 @@ export default function SignUp() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
+    try{
+      const response = await api.post("/user/signup",form);
+      console.log(response?.data?.user);
+      if(response.data?.user){
+        setUser(response.data.user);
+      }
+      if(response.data?.message){
+        toast.success(response.data.message);
+      }
+      navigate("/home");
 
-    console.log(form);
+    }catch(err){
+      console.log("error in signup frontend");
+      console.log(err.response?.data?.message);
+      if(err.response?.data?.message){
+        toast.error(err.response.data.message);
+      }
+    }
+    // console.log(form);
 
     // axios login here
   };
@@ -60,6 +82,7 @@ export default function SignUp() {
               </label>
 
               <input
+                required
                 type="text"
                 name="name"
                 placeholder="Your Name"
@@ -75,6 +98,7 @@ export default function SignUp() {
               </label>
 
               <input
+                required
                 type="email"
                 name="email"
                 placeholder="name@example.com"
@@ -93,8 +117,10 @@ export default function SignUp() {
               <div className="relative">
 
                 <input
+                  required
                   type={showPassword ? "text" : "password"}
                   name="password"
+                  minLength={6}
                   placeholder="••••••••"
                   value={form.password}
                   onChange={handleChange}

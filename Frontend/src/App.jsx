@@ -12,6 +12,10 @@ import AdminRoute from "./routes/AdminRoute"
 import Login from "./pages/Login"
 import SignUp from "./pages/SignUp"
 import Subscription from "./pages/Subscription"
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
 
 
@@ -26,11 +30,11 @@ function App() {
             <Route path="/login" element={<Login/>}/> 
             <Route path="/signup" element={<SignUp/>}/> 
             <Route path="/subscribe" element={<Subscription/>}/> 
+            <Route path="/winners" element={<Wiinners/>}/>
 
           {/*User Routes */}
             <Route element={<UserRuote/>}>
               <Route path="/profile" element={<Profile/>}/>
-              <Route path="/winners" element={<Wiinners/>}/>
             </Route>
           {/* Admin routes */}
             <Route element={<AdminRoute/>}>
@@ -47,6 +51,12 @@ function App() {
           
         </Routes>
       </BrowserRouter>  
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        theme="dark"
+        newestOnTop
+      />
     </>
   )
 }

@@ -39,6 +39,9 @@ const subscriptionSchema = new mongoose.Schema({
     donationMade:{
         type:Boolean,
         default:false
+    },
+    charityChosen:{
+        type:String
     }
 },{
     timestamps:true

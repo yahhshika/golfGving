@@ -1,27 +1,27 @@
-const winners = [
-  {
-    name: "Yashika",
-    type: "3-Match",
-    amount: "₹230,000",
-  },
-  {
-    name: "Alexander M.",
-    type: "4-Match",
-    amount: "₹15,000",
-  },
-  {
-    name: "Sophia R.",
-    type: "Grand Draw",
-    amount: "₹500,000",
-  },
-  {
-    name: "Liam K.",
-    type: "Bonus Ball",
-    amount: "₹2,500",
-  },
-];
+// const winners = [
+//   {
+//     name: "Yashika",
+//     type: "3-Match",
+//     amount: "₹230,000",
+//   },
+//   {
+//     name: "Alexander M.",
+//     type: "4-Match",
+//     amount: "₹15,000",
+//   },
+//   {
+//     name: "Sophia R.",
+//     type: "Grand Draw",
+//     amount: "₹500,000",
+//   },
+//   {
+//     name: "Liam K.",
+//     type: "Bonus Ball",
+//     amount: "₹2,500",
+//   },
+// ];
 
-export default function RecentResults() {
+export default function RecentResults({winners=[]}) {
   return (
     <section>
 
@@ -54,10 +54,17 @@ export default function RecentResults() {
           </thead>
 
           <tbody>
+            {winners.length === 0 && 
+  
+              <p className="px-6 py-5 text-gray-400 italic">
+                No Winners in the last draw
+              </p>
 
-            {winners.map((winner) => (
+          
+            }
+            {winners.map((winner,ind) => (
               <tr
-                key={winner.name}
+                key={ind}
                 className="border-b border-white/5 hover:bg-white/5 transition"
               >
                 <td className="px-6 py-5">
@@ -65,21 +72,21 @@ export default function RecentResults() {
                   <div className="flex items-center gap-3">
 
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 font-bold text-emerald-400">
-                      {winner.name[0]}
+                      {winner?.userId?.name[0]}
                     </div>
 
-                    <span>{winner.name}</span>
+                    <span>{winner?.userId?.name}</span>
 
                   </div>
 
                 </td>
 
                 <td className="px-6 py-5 text-gray-400 italic">
-                  {winner.type}
+                  {winner.matchType || "not known"}
                 </td>
 
                 <td className="px-6 py-5 text-right font-bold text-yellow-400">
-                  {winner.amount}
+                  {(winner?.matchType==="3-match" && 0.25*winner?.prizeAmount).toLocaleString("en-IN")|| (winner?.matchType==="4-match" && 0.35*winner?.prizeAmount).toLocaleString("en-IN") || (winner?.matchType==="5-match" && 0.4*winner?.prizeAmount).toLocaleString("en-IN") || "not known"}
                 </td>
 
               </tr>

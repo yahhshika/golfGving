@@ -6,7 +6,7 @@ const Winner = require("../models/Winner");
 const Company = require("../models/Company");
 const Charity = require("../models/Charity");
 const isAuthenticated = require("../middlewares/isAuthenticated");
-const {isAdmin, validateAdminLoginSchema} = require("../middlewares/admin/admin");
+const {isAdmin, validateAdminLoginSchema, validateNewAdminSchema} = require("../middlewares/admin/admin");
 const jsonwebtoken = require("jsonwebtoken");
 const ExpressError = require("../utils/ExpressError");
 const bcrypt = require("bcrypt");
@@ -37,6 +37,22 @@ router.get("/",isAuthenticated, isAdmin,asyncWrap(async(req,res,next)=>{
     const admin = await User.findById(userId);
     res.send({admin});
 }))
+
+router.post("/",isAuthenticated, isAdmin, validateNewAdminSchema, async(req,res,next)=>{
+    const newAdmin = req.body;
+    const {email, password} = newAdmin;
+    const existingAdmin = await User.findOne({email, role:"admin"});
+    if(existingAdmin){
+        return next(new ExpressError("Admin already exist!",400));
+    }
+    newAdmin.role = "admin"
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassWord = bcrypt.hashSync(password, salt);
+    newAdmin.password = hashedPassWord;
+    const admin = new User(newAdmin);
+    await admin.save();
+    res.send({message:"New Admin Registered!"});
+})
 router.post("/login",validateAdminLoginSchema, asyncWrap(async(req,res,next)=>{
     const {email, password} = req.body;
     const existingAdmin = await User.findOne({email, role:"admin"});
@@ -67,7 +83,7 @@ router.post("/draw/random",isAuthenticated, isAdmin, asyncWrap(async(req,res,nex
     const company = await Company.findOne({});
     const jackPotAmount = company.totalPrizePool;
     if(jackPotAmount===0){
-        return next(new ExpressError("no subscribers, thus draw failed",409));
+        return next(new ExpressError("not enough fund",409));
     }
     if(company.lastUnPublishedDraw){
         const unpublishedDraw = await Draw.findById(company.lastUnPublishedDraw);
@@ -81,7 +97,7 @@ router.post("/draw/random",isAuthenticated, isAdmin, asyncWrap(async(req,res,nex
     const drawArr = [...draw];
     const drawDocument = new Draw({
         type:"random",
-        numbers:drawArr,
+        draw:drawArr,
         jackPotAmount, 
         status:"simulation"
     });
@@ -110,6 +126,7 @@ router.post("/draw/random",isAuthenticated, isAdmin, asyncWrap(async(req,res,nex
                 userId: user._id,
                 drawId: drawDocument._id, 
                 matchType:"3-match",
+                name:user.name
             }
             winners.push(winnerData);
             continue;
@@ -120,6 +137,7 @@ router.post("/draw/random",isAuthenticated, isAdmin, asyncWrap(async(req,res,nex
                 userId: user._id,
                 drawId: drawDocument._id, 
                 matchType:"4-match",
+                name:user.name
             }
             winners.push(winnerData);
             continue;
@@ -130,6 +148,7 @@ router.post("/draw/random",isAuthenticated, isAdmin, asyncWrap(async(req,res,nex
                 userId: user._id,
                 drawId: drawDocument._id, 
                 matchType:"5-match",
+                name:user.name
             }
             winners.push(winnerData);
             continue;
@@ -154,12 +173,20 @@ router.post("/draw/random",isAuthenticated, isAdmin, asyncWrap(async(req,res,nex
 
     if(winners.length > 0){
         // const addedwinners = await Winner.insertMany(winners);
-        drawDocument.tempwinners = winners;
+        drawDocument.winners = winners;
     }
+
+
     // drawDocument.status = "published";
-    drawDocument.match3Count = match3;
-    drawDocument.match4Count = match4;
-    drawDocument.match5Count = match5;
+    drawDocument.match3 = match3;
+    drawDocument.match4 = match4;
+    drawDocument.match5 = match5;
+    drawDocument.poolShare3Match = poolShare3Match;
+    drawDocument.poolShare4Match = poolShare4Match;
+    drawDocument.poolShare5Match = poolShare5Match;
+    const rollOverAmount = (match5===0)?0.4*jackPotAmount:0;    
+    drawDocument.rollOverAmount = rollOverAmount;
+
     await drawDocument.save();
     company.lastUnPublishedDraw = drawDocument._id;
     await company.save();
@@ -167,8 +194,8 @@ router.post("/draw/random",isAuthenticated, isAdmin, asyncWrap(async(req,res,nex
     console.log(winners);
     console.log("drawArr");
     console.log(drawArr);
-    const rollOverAmount = (match5===0)?0.4*jackPotAmount:0;    
-    res.send({message:"draw creation successful",winners,match3,match4,match5,poolShare3Match,poolShare4Match,poolShare5Match, rollOverAmount,draw:drawArr});
+    res.send({message:"draw creation successful",draw:drawDocument});
+
 }));
 
 
@@ -176,7 +203,7 @@ router.post("/draw/algorithm",isAuthenticated, isAdmin, asyncWrap(async(req,res,
     const company = await Company.findOne({});
     const jackPotAmount = company.totalPrizePool;
     if(jackPotAmount===0){
-        return next(new ExpressError("no subscribers, thus draw failed",409));
+        return next(new ExpressError("not enough fund",409));
     }
     if(company.lastUnPublishedDraw){
         const unpublishedDraw = await Draw.findById(company.lastUnPublishedDraw);
@@ -208,7 +235,7 @@ router.post("/draw/algorithm",isAuthenticated, isAdmin, asyncWrap(async(req,res,
     const drawArr = [...draw];
     const drawDocument = new Draw({
         type:"algorithm",
-        numbers:drawArr,
+        draw:drawArr,
         jackPotAmount, 
         status:"simulation"
     });
@@ -236,6 +263,8 @@ router.post("/draw/algorithm",isAuthenticated, isAdmin, asyncWrap(async(req,res,
                 userId: user._id,
                 drawId: drawDocument._id, 
                 matchType:"3-match",
+                name:user.name
+
             }
             winners.push(winnerData);
             continue;
@@ -246,6 +275,7 @@ router.post("/draw/algorithm",isAuthenticated, isAdmin, asyncWrap(async(req,res,
                 userId: user._id,
                 drawId: drawDocument._id, 
                 matchType:"4-match",
+                name:user.name
             }
             winners.push(winnerData);
             continue;
@@ -256,6 +286,7 @@ router.post("/draw/algorithm",isAuthenticated, isAdmin, asyncWrap(async(req,res,
                 userId: user._id,
                 drawId: drawDocument._id, 
                 matchType:"5-match",
+                name:user.name
             }
             winners.push(winnerData);
             continue;
@@ -280,12 +311,18 @@ router.post("/draw/algorithm",isAuthenticated, isAdmin, asyncWrap(async(req,res,
 
     if(winners.length > 0){
         // const addedwinners = await Winner.insertMany(winners);
-        drawDocument.tempwinners = winners;
+        drawDocument.winners = winners;
     }
+
     // drawDocument.status = "published";
-    drawDocument.match3Count = match3;
-    drawDocument.match4Count = match4;
-    drawDocument.match5Count = match5;
+    drawDocument.match3 = match3;
+    drawDocument.match4 = match4;
+    drawDocument.match5 = match5;
+    drawDocument.poolShare3Match = poolShare3Match;
+    drawDocument.poolShare4Match = poolShare4Match;
+    drawDocument.poolShare5Match = poolShare5Match;
+    const rollOverAmount = (match5===0)?0.4*jackPotAmount:0;
+    drawDocument.rollOverAmount = rollOverAmount;
     await drawDocument.save();
     company.lastUnPublishedDraw = drawDocument._id;
     await company.save();
@@ -293,9 +330,8 @@ router.post("/draw/algorithm",isAuthenticated, isAdmin, asyncWrap(async(req,res,
     console.log(winners);
     console.log("drawArr");
     console.log(drawArr);
-    const rollOverAmount = (match5===0)?0.4*jackPotAmount:0;
 
-    res.send({message:"draw creation successful",winners,match3,match4,match5,poolShare3Match,poolShare4Match,poolShare5Match, rollOverAmount, draw:drawArr});
+    res.send({message:"draw creation successful",draw:drawDocument});
 }));
 
 router.patch("/draw/publish",isAuthenticated, isAdmin,asyncWrap(async(req,res,next)=>{
@@ -303,7 +339,7 @@ router.patch("/draw/publish",isAuthenticated, isAdmin,asyncWrap(async(req,res,ne
     if(!company.lastUnPublishedDraw){
         return next(
             new ExpressError(
-                "No unpublished draw found",
+                "The Draw was already published",
                 404
             )
         );
@@ -321,12 +357,11 @@ router.patch("/draw/publish",isAuthenticated, isAdmin,asyncWrap(async(req,res,ne
         );
     }
     lastDraw.status = "published";
-    if(lastDraw.tempwinners?.length > 0){
-        await Winner.insertMany(lastDraw.tempwinners);
-        lastDraw.tempwinners = [];
+    if(lastDraw.winners?.length > 0){
+        await Winner.insertMany(lastDraw.winners);
     }
     await lastDraw.save();
-    const rollOverAmount = (lastDraw.match5Count === 0)?lastDraw.jackPotAmount*0.4 : 0;
+    const rollOverAmount = (lastDraw.match5 === 0)?lastDraw.jackPotAmount*0.4 : 0;
     company.totalPrizePool = rollOverAmount;
     company.lastDrawDate = lastDraw.createdAt;
     company.lastPublishedDraw = lastDraw._id;

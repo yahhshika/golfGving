@@ -22,7 +22,8 @@ export default function CharitiesHeader() {
           Discover and support high-impact charities dedicated to transforming
           lives through the power of sport, community, and innovation. Every
           ticket purchased contributes toward meaningful causes that create
-          lasting impact.
+          lasting impact. <br />
+          (Please note that you can donate only once per-subscription)
         </p>
 
         {/* Decorative Line */}

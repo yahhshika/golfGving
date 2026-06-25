@@ -1,6 +1,6 @@
 // src/components/admin/draw/DrawResultTable.jsx
 
-export default function DrawResultTable({ drawNumbers, winners }) {
+export default function DrawResultTable({ drawNumbers, winners, type, status}) {
   const badgeColors = {
     "Match 3":
       "bg-indigo-500/10 text-indigo-300 border border-indigo-400/20",
@@ -10,12 +10,24 @@ export default function DrawResultTable({ drawNumbers, winners }) {
       "bg-amber-500/10 text-amber-400 border border-amber-400/20",
   };
 
+  const getPrizeWon = (matchType="", prizeAmt=0)=>{
+    if(matchType==="3-match"){
+      return Number((0.25*prizeAmt).toFixed(2))
+    }
+    if(matchType==="4-match"){
+      return Number((0.35*prizeAmt).toFixed(2))
+    }
+    if(matchType==="5-match"){
+      return Number((0.4*prizeAmt).toFixed(2))
+    }
+  }
+
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md shadow-lg">
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <h2 className="text-2xl font-semibold text-white">
-          Draw Results
+          Draw Results {type && type==="algorithm" && " ( Algorithmic"} {type && type==="random" && " ( Random"} {status && status==="published" && " | Published )"} {status && status==="simulation" && " | Simulation )"}
         </h2>
 
         {/* Draw Numbers */}
@@ -51,6 +63,13 @@ export default function DrawResultTable({ drawNumbers, winners }) {
           </thead>
 
           <tbody className="divide-y divide-white/5">
+            {!winners.length &&
+    
+              <tr className="px-6 py-5 text-gray-400 italic">
+                No Winners
+              </tr>
+         
+            }
             {winners.map((winner) => (
               <tr
                 key={winner.id}
@@ -75,9 +94,7 @@ export default function DrawResultTable({ drawNumbers, winners }) {
                 {/* Prize */}
                 <td className="whitespace-nowrap py-5 text-right text-sm font-bold text-emerald-400 md:text-base">
                   $
-                  {winner.prize.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                  })}
+                  {getPrizeWon(winner?.matchType, winner?.prizeAmount)}
                 </td>
               </tr>
             ))}

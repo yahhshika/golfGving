@@ -36,7 +36,7 @@ export default function SmallCard({
       <h3
         className={`text-3xl font-bold transition-transform duration-300 group-hover:scale-110 ${color}`}
       >
-        {result}
+        {heading === "Roll Over"? Number(result).toFixed(2) : result}
       </h3>
     </div>
   );

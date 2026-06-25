@@ -1,7 +1,9 @@
 import { FaArrowRight, FaAward } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
+import UserContext from "../../contexts/user/UserContext";
+import { useContext } from "react";
 export default function Hero() {
+  let {user} = useContext(UserContext);
   return (
     <section className="relative overflow-hidden bg-[#0B1326] pb-24">
       {/* Background Glow */}
@@ -46,21 +48,24 @@ export default function Hero() {
         {/* Buttons */}
 
         <div className="mt-12 flex w-full flex-col items-center justify-center gap-5 sm:w-auto sm:flex-row">
-          <Link
-            to="/charities"
-            className="group flex items-center justify-center gap-3 rounded-xl bg-[#4EDEA3] px-8 py-4 text-lg font-semibold text-[#003824] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(78,222,163,0.35)]"
-          >
-            Enter the Draw
-
-            <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
 
           <Link
             to="/winners"
-            className="rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-lg font-semibold text-[#DAE2FD] backdrop-blur-xl transition-all duration-300 hover:border-emerald-400/30 hover:bg-white/10"
+            className="group flex items-center justify-center gap-3 rounded-xl bg-[#4EDEA3] px-8 py-4 text-lg font-semibold text-[#003824] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(78,222,163,0.35)]"
           >
             View Live Results
+            <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+
           </Link>
+          {!user 
+          &&
+          <Link
+            to="/signup"
+            className="rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-lg font-semibold text-[#DAE2FD] backdrop-blur-xl transition-all duration-300 hover:border-emerald-400/30 hover:bg-white/10"
+          >
+            Join Community
+          </Link>
+          }
         </div>
 
         {/* Stats */}

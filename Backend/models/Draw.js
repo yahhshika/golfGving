@@ -7,7 +7,7 @@ const drawSchema = new mongoose.Schema({
         required:true
 
     },
-    numbers:{
+    draw:{
         type:[Number],
         required:true
     },
@@ -22,16 +22,22 @@ const drawSchema = new mongoose.Schema({
         default:"simulation",
         required:true
     },
-    match3Count:{
+    match3:{
         type:Number,
+        min:0,
+        default:0
     },
-    match4Count:{
+    match4:{
         type:Number,
+        min:0,
+        default:0
     },
-    match5Count:{
+    match5:{
         type:Number,
+        min:0,
+        default:0
     },
-    tempwinners:[
+    winners:[
         {
 
             userId:{
@@ -52,9 +58,35 @@ const drawSchema = new mongoose.Schema({
             prizeAmount:{
                 type:Number,
                 required:true
+            },
+            name:{
+                type:String,
+                required:true
             }
         }
     ],
+    poolShare3Match:{
+        type:Number,
+        min:0,
+        default:0
+    },
+    poolShare4Match:{
+        type:Number,
+        min:0,
+        default:0
+    },
+    poolShare5Match:{
+        type:Number,
+        min:0,
+        default:0
+    },
+    rollOverAmount:{
+        type:Number,
+        min:0,
+        default:0
+    }
+
+
 },{
     timestamps:true
 });

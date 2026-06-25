@@ -1,13 +1,17 @@
 // src/components/subscription/SubscriptionForm.jsx
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useContext } from "react";
+import UserContext from "../../contexts/user/UserContext";
 import { FaArrowRight } from "react-icons/fa";
 import { MdVolunteerActivism } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/axios";
+import { toast } from "react-toastify";
 
 export default function SubscriptionForm() {
   const [plan, setPlan] = useState("monthly");
   const [percentage, setPercentage] = useState(10);
-
+  const {authUser} = useContext(UserContext);
   const prices = {
     monthly: 1000,
     yearly: 10000,
@@ -17,15 +21,35 @@ export default function SubscriptionForm() {
     return Math.round((prices[plan] * percentage) / 100);
   }, [plan, percentage]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
-    // Replace with your API call
-    console.log({
-      plan,
-      percentage,
-      charityAmount,
-    });
+    try{
+      const response = await api.post("/user/subscription", {plan,charityPercentage:percentage});
+
+      if(response?.data?.message){
+        const tId = toast.loading("Payment Initialized, we'll let you know once confirmed...");
+        setTimeout(()=>{
+
+          toast.update(tId, {
+            render:response.data.message,
+            type:"success",
+            isLoading:false,
+            autoClose:3000
+          });
+
+          authUser().catch(err=>{
+            console.log("error in authUser after new subscription creation");
+            toast.info("Your subscription is confirmed, Kindly login again!");
+            setUser(null);
+          })
+        },5000);
+        
+      }
+    }catch(err){
+      console.log("error in creating new subscription");
+      toast.error(err?.response?.data?.message || "Something went wrong, try again later");
+    }
   };
 
   return (

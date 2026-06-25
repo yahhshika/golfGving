@@ -2,19 +2,39 @@
 
 import { useState } from "react";
 import { FaPlay, FaSpinner } from "react-icons/fa";
-
-export default function DrawHeader() {
+import api from "../../api/axios";
+import { toast } from "react-toastify";
+export default function DrawHeader({setDraw}) {
   const [isSimulating, setIsSimulating] = useState(false);
+  const [useAlgorithm, setUseAlgorithm] = useState(false);
 
-  const handleSimulation = () => {
+  const handleSimulation = async() => {
     if (isSimulating) return;
-
     setIsSimulating(true);
-
     // Replace this with your API call later
-    setTimeout(() => {
-      setIsSimulating(false);
-    }, 1200);
+    try{
+      let url = "/admin/draw";
+      if(useAlgorithm){
+        url = url + "/algorithm"
+      }else{
+        url = url + "/random"
+      }
+      const response = await api.post(url);
+      console.log(response.data)
+      
+      setTimeout(() => {
+        setIsSimulating(false);
+        if(response?.data){
+          setDraw(response.data.draw);
+        }
+        toast.info("Now latest draw is under your simulation")
+      }, 1200);
+
+    }catch(err){
+      console.log(err);
+      console.log(err.response);
+      
+    }
   };
 
   return (
@@ -34,6 +54,37 @@ export default function DrawHeader() {
       {/* Simulation Card */}
       <section className="rounded-2xl border border-emerald-500/20 border-dashed bg-white/5 p-8 backdrop-blur-md shadow-lg">
         <div className="flex flex-col items-center justify-center text-center">
+          <div className="mb-6 flex items-center justify-center gap-4">
+            <span
+              className={`text-sm font-medium transition ${
+                !useAlgorithm ? "text-emerald-400" : "text-slate-500"
+              }`}
+            >
+              Random Draw
+            </span>
+
+            <button
+              type="button"
+              onClick={() => setUseAlgorithm(!useAlgorithm)}
+              className={`relative h-7 w-14 rounded-full transition duration-300 ${
+                useAlgorithm ? "bg-emerald-500" : "bg-slate-600"
+              }`}
+            >
+              <span
+                className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-all duration-300 ${
+                  useAlgorithm ? "left-8" : "left-1"
+                }`}
+              />
+            </button>
+
+            <span
+              className={`text-sm font-medium transition ${
+                useAlgorithm ? "text-emerald-400" : "text-slate-500"
+              }`}
+            >
+              Algorithmic Draw
+            </span>
+          </div>
           <button
             onClick={handleSimulation}
             disabled={isSimulating}
@@ -46,6 +97,7 @@ export default function DrawHeader() {
               </>
             ) : (
               <>
+            
                 <FaPlay className="transition-transform duration-300 group-hover:translate-x-1" />
                 <span>Press to Simulate a Draw</span>
               </>

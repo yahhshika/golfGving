@@ -1,4 +1,6 @@
 import React from "react";
+import { useContext } from "react";
+
 
 export default function SubscriptionHistory({ subscriptions = [] }) {
   return (
@@ -45,26 +47,26 @@ export default function SubscriptionHistory({ subscriptions = [] }) {
                   className="border-b border-slate-800 hover:bg-slate-800/40 transition"
                 >
                   <td className="px-6 py-5 font-medium text-white">
-                    {item.charityName}
+                    {item.charityChosen || "Donation Not Made"}
                   </td>
 
                   <td className="px-6 py-5 text-slate-400">
-                    {item.date}
+                    {item.createdAt.toString().split("T")[0] || "not known"}
                   </td>
 
                   <td className="px-6 py-5 font-semibold text-emerald-400">
-                    ₹{item.amount}
+                    ₹{item.amount || "not known"}
                   </td>
 
                   <td className="px-6 py-5 text-right">
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                        item.status === "Active"
+                        item.status === "active"
                           ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                           : "border border-red-500/30 bg-red-500/10 text-red-400"
                       }`}
                     >
-                      {item.status}
+                      {item.status || "not known"}
                     </span>
                   </td>
                 </tr>

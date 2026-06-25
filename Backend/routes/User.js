@@ -21,8 +21,19 @@ router.get("/",isAuthenticated,asyncWrap(async(req,res,next)=>{
     if(!user){
         return next(new ExpressError("User not found!", 404));
     }
-    const activeSubs = await Subscription.findOne({userId, status:"active"});
-    res.send({user, subscription:activeSubs});
+    const finalUser = user.toObject();
+    if(user.role !== "admin"){
+
+        const allsubs = await Subscription.find({userId});
+        const allWinnings = await Winner.find({userId});
+        finalUser.subscriptions = allsubs;
+        finalUser.winnings = allWinnings;
+    }else{
+        finalUser.subscriptions = [];
+        finalUser.winnings = [];
+
+    }
+    res.send({message:"Login Successful!",user:finalUser});
 }));
 
 router.post("/signup",signUpSchemaValidation,asyncWrap(async(req,res,next)=>{
@@ -48,6 +59,8 @@ router.post("/signup",signUpSchemaValidation,asyncWrap(async(req,res,next)=>{
 
     const finalUser = newUser.toObject();
     delete finalUser.password;
+    finalUser.subscriptions = [];
+    finalUser.winnings = [];
     res.cookie("token", token, {
         httpOnly: true,
         sameSite: "lax",
@@ -74,8 +87,19 @@ router.post("/login",loginSchemaValidation,asyncWrap(async (req,res,next)=>{
         userId : existingUser._id
     };
     const token  = jsonwebtoken.sign(data, process.env.JWT_SECRET);
+    
     const finalUser = existingUser.toObject();
     delete finalUser.password;
+    if(finalUser.role !== "admin"){
+
+        const allSubs = await Subscription.find({userId:existingUser._id});
+        const allWinnings = await Winner.find({userId:existingUser._id});
+        finalUser.subscriptions = allSubs;
+        finalUser.winnings = allWinnings;
+    }else{
+        finalUser.subscriptions = [];
+        finalUser.winnings = [];
+    }
     res.cookie("token", token, {
         httpOnly: true,
         sameSite: "lax",
@@ -89,9 +113,9 @@ router.post("/login",loginSchemaValidation,asyncWrap(async (req,res,next)=>{
 router.put("/charity/:charityName",isAuthenticated,isSubscriber,asyncWrap(async (req,res,next)=>{
     let {charityName} = req.params;
     const {userId} = req.data;
-    const subscription = await Subscription.findOne({userId});
+    const subscription = await Subscription.findOne({userId,status:"active"});
     if(subscription && subscription.donationMade){
-        return next(new ExpressError("Already donated, new charity addition not allowed.",400));
+        return next(new ExpressError("Already donated, new donation not allowed.",400));
     }
     const charity = await Charity.findOne({name:charityName});
     if(!charity){
@@ -104,8 +128,9 @@ router.put("/charity/:charityName",isAuthenticated,isSubscriber,asyncWrap(async 
     charity.totalDonation += donationAmt;
     await charity.save();
     subscription.donationMade = true;
+    subscription.charityChosen=charityName;
     await subscription.save();
-    res.send({message:"Charity Added"});
+    res.send({message:`Successfuly donated to ${charityName}`});
 }));
 
 // {userId, plan, amount, startDate, expiryDate, status, charityPercentage};
@@ -162,7 +187,7 @@ router.post("/subscription",isAuthenticated,subscriptionSchemaValidate,asyncWrap
     company.totalDonations += charityAmt;
     company.totalPrizePool += poolPrizeVal; 
     await company.save();
-    res.send({subscription: finalSubs});
+    res.send({message:"Subcription Activated Successfully!",subscription: finalSubs});
 }));
 
 //fetch all the subscriptions made till now, that is cancelled, lapsed, active ones. 
@@ -183,7 +208,7 @@ router.delete("/subscription",isAuthenticated,isSubscriber,asyncWrap(async(req,r
     }
     const subscription = await Subscription.findOne({userId, status:"active"});
     if(!subscription){
-        return next(new ExpressError("Subscription not found.", 404));
+        return next(new ExpressError("No Subscriptions Found.", 404));
     }
     subscription.status = "cancelled";
     await subscription.save();
@@ -236,7 +261,7 @@ router.put("/score/:scoreId", isAuthenticated, isSubscriber,scoreSchemaValidatio
     }
     targetScore.score = score;
     await user.save();
-    res.send({message:"Score Edit Successful", scores:user.scores});
+    res.send({message:"Score Edited Successfully", scores:user.scores});
 }));
 
 router.get("/winninghistory",isAuthenticated,asyncWrap(async(req,res,next)=>{

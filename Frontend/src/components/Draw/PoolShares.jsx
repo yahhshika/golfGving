@@ -1,28 +1,45 @@
 // src/components/admin/draw/PoolShares.jsx
 
 import { FaCloudUploadAlt } from "react-icons/fa";
-
-export default function PoolShares() {
+import api from "../../api/axios";
+import { toast } from "react-toastify";
+export default function PoolShares({draw, fetchDraw}) {
   // Dummy data (replace with API response later)
-  const totalPool = 4000;
-
+  const totalPool = draw?.poolShare3Match + draw?.poolShare4Match + draw?.poolShare5Match || 0;
+ 
   const shares = [
     {
       label: "Match 3",
-      amount: 1000,
+      amount: draw?.poolShare3Match,
       color: "bg-indigo-300",
     },
     {
       label: "Match 4",
-      amount: 1600,
+      amount: draw?.poolShare4Match,
       color: "bg-emerald-400",
     },
     {
       label: "Match 5",
-      amount: 1400,
+      amount: draw?.poolShare5Match,
       color: "bg-amber-400",
     },
   ];
+
+  const handleDrawPublish = async()=>{
+    try{
+      const response = await api.patch("/admin/draw/publish");
+      if(response?.data?.message){
+        toast.success(response.data.message);
+      }
+      await fetchDraw()
+    }catch(err){
+      console.log("error in Draw publish frontend");
+      console.log(err.response?.data?.message);
+      if(err.response?.data?.message){
+        toast.error(err.response.data.message);
+      }
+    }
+  }
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md shadow-lg">
@@ -92,22 +109,22 @@ export default function PoolShares() {
       <div className="mt-8 space-y-4">
         {shares.map((share) => (
           <div
-            key={share.label}
+            key={share?.label}
             className="flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
               <span
-                className={`h-3 w-3 rounded-full ${share.color}`}
+                className={`h-3 w-3 rounded-full ${share?.color}`}
               />
 
               <span className="text-slate-300">
-                {share.label}
+                {share?.label}
               </span>
             </div>
 
             <span className="font-semibold text-white">
               $
-              {share.amount.toLocaleString()}
+              {share?.amount?.toLocaleString()}
             </span>
           </div>
         ))}
@@ -115,7 +132,7 @@ export default function PoolShares() {
 
       {/* Publish Button */}
       <div className="mt-10 space-y-4">
-        <button
+        <button onClick={handleDrawPublish}
           className="
             group
             flex

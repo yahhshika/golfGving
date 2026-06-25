@@ -9,12 +9,15 @@ import {
   MdRefresh,
 } from "react-icons/md";
 
+import api from "../../api/axios";
+import { toast } from "react-toastify";
+
 export default function NewCharity() {
   const [formData, setFormData] = useState({
-    charityName: "",
+    name: "",
     description: "",
-    imageUrl: "",
-    totalDonations: "",
+    image: "",
+    totalDonation: "",
   });
 
   const [saving, setSaving] = useState(false);
@@ -47,30 +50,51 @@ export default function NewCharity() {
     }));
   };
 
-  const handleDiscard = () => {
+  const handleDiscard = async() => {
+
     setFormData({
-      charityName: "",
+      name: "",
       description: "",
-      imageUrl: "",
-      totalDonations: "",
+      image: "",
+      totalDonation: "",
     });
 
     setSaved(false);
+   
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
+
     e.preventDefault();
-
-    setSaving(true);
-
-    // TODO:
-    // await axios.post(...)
-    // Connect backend later
-
-    setTimeout(() => {
+    try{
+      const response = await api.post("/admin/charity",formData);
+      if(response?.data?.message){
+        toast.success(response.data.message);
+      }
+      setFormData({
+        name: "",
+        description: "",
+        image: "",
+        totalDonation: "",
+      });
+  
+      setSaved(true);
+      setTimeout(() => {
       setSaving(false);
       setSaved(true);
     }, 1500);
+    }catch(err){
+      console.log("error in new charity addition by admin frontend");
+      console.log(err.response?.data?.message);
+      if(err.response?.data?.message){
+        toast.error(err.response.data.message);
+      }
+    }
+   
+
+   
+
+    
   };
 
   return (
@@ -133,8 +157,8 @@ export default function NewCharity() {
 
               <input
                 type="text"
-                name="charityName"
-                value={formData.charityName}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 placeholder="e.g. Green Fairways Foundation"
                 className="
@@ -213,8 +237,8 @@ export default function NewCharity() {
 
                   <input
                     type="url"
-                    name="imageUrl"
-                    value={formData.imageUrl}
+                    name="image"
+                    value={formData.image}
                     onChange={handleChange}
                     placeholder="https://image-library.com/..."
                     className="
@@ -262,8 +286,8 @@ export default function NewCharity() {
 
                   <input
                     type="number"
-                    name="totalDonations"
-                    value={formData.totalDonations}
+                    name="totalDonation"
+                    value={formData.totalDonation}
                     onChange={handleChange}
                     placeholder="0.00"
                     className="

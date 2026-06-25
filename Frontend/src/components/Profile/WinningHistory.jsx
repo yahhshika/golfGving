@@ -49,15 +49,15 @@ export default function WinningHistory({ winnings = [] }) {
                   </td>
 
                   <td className="px-6 py-5 text-white">
-                    {item.matchType}
+                    {item.matchType || "not known"}
                   </td>
 
                   <td className="px-6 py-5 font-bold text-emerald-400">
-                    ₹{item.prize}
+                    ₹{item.prizeAmount || "not known"}
                   </td>
 
                   <td className="px-6 py-5 text-right text-slate-400">
-                    {item.date}
+                    {item.createdAt.toString().split("T")[0] || "not known"}
                   </td>
                 </tr>
               ))
