@@ -49,7 +49,11 @@ router.get("/user",isAuthenticated,asyncWrap(async(req,res,next)=>{
 
 router.get("/logout",(req,res,next)=>{
     try{
-        res.clearCookie("token");
+        res.clearCookie("token",{
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+        });
         res.send({message:"Logout Successful!"});
 
     }catch(err){
