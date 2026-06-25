@@ -63,8 +63,8 @@ router.post("/signup",signUpSchemaValidation,asyncWrap(async(req,res,next)=>{
     finalUser.winnings = [];
     res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "lax",
-        secure: false,
+        sameSite:  process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production",
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
     res.send({message:"User Signup Successful!", user: finalUser, token:token});
