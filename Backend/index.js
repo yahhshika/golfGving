@@ -1,6 +1,7 @@
 if(process.env.NODE_ENV != "production"){
     require("dotenv").config();
 }
+console.log("NODE_ENV =", process.env.NODE_ENV);
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const main = require("./dbConnect");
