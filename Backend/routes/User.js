@@ -61,11 +61,20 @@ router.post("/signup",signUpSchemaValidation,asyncWrap(async(req,res,next)=>{
     delete finalUser.password;
     finalUser.subscriptions = [];
     finalUser.winnings = [];
+    // res.cookie("token", token, {
+    //     httpOnly: true,
+    //     sameSite:  process.env.NODE_ENV === "production" ? "none" : "lax",
+    //     secure: process.env.NODE_ENV === "production",
+    //     maxAge: 7 * 24 * 60 * 60 * 1000
+    // });
     res.cookie("token", token, {
         httpOnly: true,
-        sameSite:  process.env.NODE_ENV === "production" ? "none" : "lax",
         secure: process.env.NODE_ENV === "production",
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        sameSite:
+            process.env.NODE_ENV === "production"
+                ? "None"
+                : "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.send({message:"User Signup Successful!", user: finalUser, token:token});
 
@@ -100,11 +109,20 @@ router.post("/login",loginSchemaValidation,asyncWrap(async (req,res,next)=>{
         finalUser.subscriptions = [];
         finalUser.winnings = [];
     }
+    // res.cookie("token", token, {
+    //     httpOnly: true,
+    //     sameSite: "lax",
+    //     secure: false,
+    //     maxAge: 7 * 24 * 60 * 60 * 1000
+    // });
     res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "lax",
-        secure: false,
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        secure: process.env.NODE_ENV === "production",
+        sameSite:
+            process.env.NODE_ENV === "production"
+                ? "None"
+                : "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.send({message:"User Login Successful!", user:finalUser, token});
 }));
