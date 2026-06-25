@@ -6,6 +6,18 @@ export default function SmallCard({
   color = "text-white",
   highlight = false,
 }) {
+  if(heading === "Roll Over" && result != null) {
+    result = Number(result).toFixed(2);
+  }
+
+  if(
+    result === null ||
+    result === undefined ||
+    result === "" ||
+    Number.isNaN(Number(result))
+  ) {
+    result = "-";
+  }
   return (
     <div
       className={`
@@ -36,7 +48,7 @@ export default function SmallCard({
       <h3
         className={`text-3xl font-bold transition-transform duration-300 group-hover:scale-110 ${color}`}
       >
-        {heading === "Roll Over"? Number(result).toFixed(2) : result}
+        {result}
       </h3>
     </div>
   );

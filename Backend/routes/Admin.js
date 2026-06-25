@@ -72,8 +72,8 @@ router.post("/login",validateAdminLoginSchema, asyncWrap(async(req,res,next)=>{
     delete finalAdminData.password;
     res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "lax",
-        secure: false,
+        sameSite:  process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production",
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
     res.send({message:"login successful", user:finalAdminData, token});

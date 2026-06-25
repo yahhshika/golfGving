@@ -35,7 +35,7 @@ export default function Wiinners() {
   return (
     <main className="min-h-screen bg-[#0b1326] text-white pt-28 pb-20">
       <div className="mx-auto max-w-7xl px-4 md:px-8 space-y-12">
-        {user &&
+        {user && user.role==="subscriber" &&
         <UserResult winners={winners} />
         }
         <DrawTicket draw={draw}/>
