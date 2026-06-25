@@ -6,6 +6,13 @@ export default function SmallCard({
   color = "text-white",
   highlight = false,
 }) {
+  const textSize =
+  String(result).length > 12
+    ? "text-base"
+    : String(result).length > 8
+    ? "text-lg"
+    : "text-xl";
+
   if(heading === "Roll Over" && result != null) {
     result = Number(result).toFixed(2);
   }
@@ -46,7 +53,7 @@ export default function SmallCard({
 
       {/* Result */}
       <h3
-        className={`text-3xl font-bold transition-transform duration-300 group-hover:scale-110 ${color}`}
+        className={`${textSize} font-bold transition-transform duration-300 group-hover:scale-110 ${color}`}
       >
         {result}
       </h3>

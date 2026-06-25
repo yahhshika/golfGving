@@ -81,7 +81,7 @@ export default function Navbar() {
                 key={"Home"}
                 to={"/home"}
                 className={({ isActive }) =>
-                  `relative pb-1 text-lg transition-all duration-300 ${
+                  `relative pb-1 text-lg transition-all duration-300 max-[1000px]:hidden ${
                     isActive
                       ? "text-[#4EDEA3]"
                       : "text-[#BBCABF] hover:text-[#4EDEA3]"
@@ -97,7 +97,8 @@ export default function Navbar() {
                     )}
                   </>
                 )}
-              </NavLink>      
+              </NavLink>  
+          
             :
           <div className="hidden min-[1000px]:flex items-center gap-12">
             {links.map((item) => {
