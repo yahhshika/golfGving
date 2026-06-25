@@ -1,6 +1,8 @@
 import React from "react";
 
 export default function WinningHistory({ winnings = [] }) {
+  // console.log("winnings")
+  // console.log(winnings);
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 shadow-lg backdrop-blur-md">
       {/* Header */}
@@ -39,28 +41,37 @@ export default function WinningHistory({ winnings = [] }) {
 
           <tbody>
             {winnings.length ? (
-              winnings.map((item) => (
+              winnings.map((item) => {
+                const prize =
+                item?.matchType === "3-match"
+                  ? 0.25 * item.prizeAmount
+                  : item?.matchType === "4-match"
+                  ? 0.35 *item.prizeAmount
+                  : item?.matchType === "5-match"
+                  ? 0.4 * item.prizeAmount
+                  : null;
+                return(
                 <tr
-                  key={item._id}
+                  key={item?._id}
                   className="border-b border-slate-800 transition hover:bg-slate-800/40"
                 >
                   <td className="px-6 py-5 font-semibold text-yellow-400">
-                    {item.drawId}
+                    {item?.drawId || "-"}
                   </td>
 
                   <td className="px-6 py-5 text-white">
-                    {item.matchType || "not known"}
+                    {item?.matchType || "not known"}
                   </td>
 
                   <td className="px-6 py-5 font-bold text-emerald-400">
-                    ₹{item.prizeAmount || "not known"}
+                    ₹{prize !== null ? prize.toFixed(2) : "Not known"}
                   </td>
 
                   <td className="px-6 py-5 text-right text-slate-400">
-                    {item.createdAt.toString().split("T")[0] || "not known"}
+                    {item?.updatedAt?.toString().split("T")[0] || "not known"}
                   </td>
                 </tr>
-              ))
+              )})
             ) : (
               <tr>
                 <td
@@ -78,14 +89,23 @@ export default function WinningHistory({ winnings = [] }) {
       {/* Mobile Cards */}
       <div className="space-y-4 p-4 md:hidden">
         {winnings.length ? (
-          winnings.map((item) => (
+          winnings.map((item) => {
+            const prize =
+              item?.matchType === "3-match"
+                ? 0.25 * item.prizeAmount
+                : item?.matchType === "4-match"
+                ? 0.35 *item.prizeAmount
+                : item?.matchType === "5-match"
+                ? 0.4 * item.prizeAmount
+                : null;
+            return (
             <div
               key={item._id}
               className="rounded-xl border border-slate-800 bg-slate-900 p-4"
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-yellow-400">
-                  {item.drawId}
+                  {item?.drawId}
                 </h3>
 
                 <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-semibold text-emerald-400">
@@ -100,7 +120,7 @@ export default function WinningHistory({ winnings = [] }) {
                   </span>
 
                   <span className="text-white">
-                    {item.matchType}
+                    {item?.matchType || "-"}
                   </span>
                 </div>
 
@@ -110,7 +130,7 @@ export default function WinningHistory({ winnings = [] }) {
                   </span>
 
                   <span className="font-bold text-emerald-400">
-                    ₹{item.prize}
+                    ₹{prize !== null ? prize.toFixed(2) : "Not known"}
                   </span>
                 </div>
 
@@ -120,12 +140,12 @@ export default function WinningHistory({ winnings = [] }) {
                   </span>
 
                   <span className="text-white">
-                    {item.date}
+                    {item?.updatedAt?.toString().split("T")[0] || "not known"}
                   </span>
                 </div>
               </div>
             </div>
-          ))
+          )})
         ) : (
           <div className="py-10 text-center text-slate-500">
             No winnings yet.

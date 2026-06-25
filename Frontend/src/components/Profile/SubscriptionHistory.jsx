@@ -3,6 +3,7 @@ import { useContext } from "react";
 
 
 export default function SubscriptionHistory({ subscriptions = [] }) {
+  // console.log(subscriptions);
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900/70 backdrop-blur-md shadow-lg overflow-hidden">
       {/* Header */}
@@ -43,30 +44,30 @@ export default function SubscriptionHistory({ subscriptions = [] }) {
             {subscriptions.length ? (
               subscriptions.map((item) => (
                 <tr
-                  key={item._id}
+                  key={item?._id}
                   className="border-b border-slate-800 hover:bg-slate-800/40 transition"
                 >
                   <td className="px-6 py-5 font-medium text-white">
-                    {item.charityChosen || "Donation Not Made"}
+                    {item?.charityChosen || "Donation Not Made"}
                   </td>
 
                   <td className="px-6 py-5 text-slate-400">
-                    {item.createdAt.toString().split("T")[0] || "not known"}
+                    {item?.createdAt?.toString().split("T")[0] || "not known"}
                   </td>
 
                   <td className="px-6 py-5 font-semibold text-emerald-400">
-                    ₹{item.amount || "not known"}
+                    ₹{item?.amount || "not known"}
                   </td>
 
                   <td className="px-6 py-5 text-right">
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                        item.status === "active"
+                        item?.status === "active"
                           ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                           : "border border-red-500/30 bg-red-500/10 text-red-400"
                       }`}
                     >
-                      {item.status || "not known"}
+                      {item?.status || "not known"}
                     </span>
                   </td>
                 </tr>
@@ -90,22 +91,22 @@ export default function SubscriptionHistory({ subscriptions = [] }) {
         {subscriptions.length ? (
           subscriptions.map((item) => (
             <div
-              key={item._id}
+              key={item?._id}
               className="rounded-xl border border-slate-800 bg-slate-900 p-4"
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-white">
-                  {item.charityName}
+                  {item?.charityName}
                 </h3>
 
                 <span
                   className={`rounded-full px-2 py-1 text-[11px] font-semibold ${
-                    item.status === "Active"
+                    item?.status === "active"
                       ? "bg-emerald-500/10 text-emerald-400"
                       : "bg-red-500/10 text-red-400"
                   }`}
                 >
-                  {item.status}
+                  {item?.status}
                 </span>
               </div>
 
@@ -113,14 +114,14 @@ export default function SubscriptionHistory({ subscriptions = [] }) {
                 <div className="flex justify-between">
                   <span className="text-slate-400">Date</span>
 
-                  <span className="text-white">{item.date}</span>
+                  <span className="text-white">{item?.createdAt?.toString().split("T")[0] || "not known"}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-slate-400">Amount</span>
 
                   <span className="font-semibold text-emerald-400">
-                    ₹{item.amount}
+                    ₹{item?.amount}
                   </span>
                 </div>
               </div>
