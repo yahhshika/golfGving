@@ -23,7 +23,7 @@ export default function PoolShares({draw, fetchDraw}) {
       amount: draw?.poolShare5Match,
       color: "bg-amber-400",
     },
-  ];
+  ]; 
 
   const handleDrawPublish = async()=>{
     try{
@@ -31,10 +31,10 @@ export default function PoolShares({draw, fetchDraw}) {
       if(response?.data?.message){
         toast.success(response.data.message);
       }
-      await fetchDraw()
+      await fetchDraw();
     }catch(err){
       console.log("error in Draw publish frontend");
-      console.log(err.response?.data?.message);
+      // console.log(err);
       if(err.response?.data?.message){
         toast.error(err.response.data.message);
       }

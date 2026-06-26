@@ -4,7 +4,7 @@ import DrawResultTable from "./DrawResultTable";
 import SmallCard from "./SmallCard";
 import PoolShares from "./PoolShares";
 
-export default function DrawResults({draw}) {
+export default function DrawResults({draw, fetchDraw}) {
   // Dummy data (replace with API response later)
   // const drawNumbers = [6, 18, 12, 4, 44];
   const colors = ["text-indigo-300","text-emerald-400","text-amber-400","text-white"]
@@ -82,7 +82,7 @@ rollOverAmount)}
       </div>
 
       {/* Pool Shares */}
-      <PoolShares draw={draw} />
+      <PoolShares draw={draw}  fetchDraw={fetchDraw}/>
     </section>
   );
 }
