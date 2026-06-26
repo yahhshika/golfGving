@@ -8,7 +8,7 @@ connectDB();
 async function initCompany(){
     await Company.deleteMany({});
     await Company.insertOne({
-        companyProfit:0,totalRevenue:0,totalDonations:0,totalPrizePool:9000000000, lastPublishedDraw:undefined
+        companyProfit:0,totalRevenue:0,totalDonations:0,totalPrizePool:90000, lastPublishedDraw:undefined
     });
 }
 initCompany().then(()=>{

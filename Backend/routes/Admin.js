@@ -70,12 +70,7 @@ router.post("/login",validateAdminLoginSchema, asyncWrap(async(req,res,next)=>{
     const token = jsonwebtoken.sign(data, process.env.JWT_SECRET);
     const finalAdminData = existingAdmin.toObject();
     delete finalAdminData.password;
-    // res.cookie("token", token, {
-    //     httpOnly: true,
-    //     sameSite:  process.env.NODE_ENV === "production" ? "none" : "lax",
-    //     secure: process.env.NODE_ENV === "production",
-    //     maxAge: 7 * 24 * 60 * 60 * 1000
-    // });
+   
     res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",

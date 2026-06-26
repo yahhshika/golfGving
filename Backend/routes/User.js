@@ -61,12 +61,7 @@ router.post("/signup",signUpSchemaValidation,asyncWrap(async(req,res,next)=>{
     delete finalUser.password;
     finalUser.subscriptions = [];
     finalUser.winnings = [];
-    // res.cookie("token", token, {
-    //     httpOnly: true,
-    //     sameSite:  process.env.NODE_ENV === "production" ? "none" : "lax",
-    //     secure: process.env.NODE_ENV === "production",
-    //     maxAge: 7 * 24 * 60 * 60 * 1000
-    // });
+
     res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -109,12 +104,7 @@ router.post("/login",loginSchemaValidation,asyncWrap(async (req,res,next)=>{
         finalUser.subscriptions = [];
         finalUser.winnings = [];
     }
-    // res.cookie("token", token, {
-    //     httpOnly: true,
-    //     sameSite: "lax",
-    //     secure: false,
-    //     maxAge: 7 * 24 * 60 * 60 * 1000
-    // });
+ 
     res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
