@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 export default function PoolShares({draw, fetchDraw}) {
   // Dummy data (replace with API response later)
   const totalPool = draw?.poolShare3Match + draw?.poolShare4Match + draw?.poolShare5Match || 0;
- 
+ console.log(draw);
   const shares = [
     {
       label: "Match 3",
@@ -24,6 +24,8 @@ export default function PoolShares({draw, fetchDraw}) {
       color: "bg-amber-400",
     },
   ]; 
+  console.log("via poolShares");
+  console.log(shares);
 
   const handleDrawPublish = async()=>{
     try{
@@ -96,7 +98,7 @@ export default function PoolShares({draw, fetchDraw}) {
         {/* Center Text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <h3 className="text-3xl font-bold text-white">
-            ${totalPool.toLocaleString()}
+            ₹{totalPool.toLocaleString()}
           </h3>
 
           <p className="text-sm text-slate-400">
@@ -123,7 +125,7 @@ export default function PoolShares({draw, fetchDraw}) {
             </div>
 
             <span className="font-semibold text-white">
-              $
+              ₹
               {share?.amount?.toLocaleString()}
             </span>
           </div>

@@ -9,14 +9,14 @@ export default function UserResult({winners}) {
   const winner = winners.find(
     (winner) => winner.userId?._id?.toString() === user?._id?.toString()
   );
-  const prize =
-  winner?.matchType === "3-match"
-    ? 0.25 * winner.prizeAmount
-    : winner?.matchType === "4-match"
-    ? 0.35 * winner.prizeAmount
-    : winner?.matchType === "5-match"
-    ? 0.4 * winner.prizeAmount
-    : null;
+  // const prize =
+  // winner?.matchType === "3-match"
+  //   ? 0.25 * winner.prizeAmount
+  //   : winner?.matchType === "4-match"
+  //   ? 0.35 * winner.prizeAmount
+  //   : winner?.matchType === "5-match"
+  //   ? 0.4 * winner.prizeAmount
+  //   : null;
   
   return (
     <section className="relative overflow-hidden rounded-2xl border border-yellow-500/20 bg-white/5 backdrop-blur-xl">
@@ -35,7 +35,7 @@ export default function UserResult({winners}) {
         </h1>
 
         <h2 className="mt-4 text-2xl md:text-4xl font-extrabold uppercase tracking-widest bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent">
-          {winner?`Yay!! You Won ${prize !== null ? prize.toFixed(2) : "Not known"}`:"Sorry! Better Luck next time."}
+          {winner?`Yay!! You Won ₹${winner?.prizeAmount ? Number(winner.prizeAmount).toFixed(2) : "Not known"}`:"Sorry! Better Luck next time."}
          
         </h2>
         {winner && 

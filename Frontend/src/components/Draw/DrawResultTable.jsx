@@ -10,17 +10,25 @@ export default function DrawResultTable({ drawNumbers, winners, type, status}) {
       "bg-amber-500/10 text-amber-400 border border-amber-400/20",
   };
 
-  const getPrizeWon = (matchType="", prizeAmt=0)=>{
-    if(matchType==="3-match"){
-      return Number((0.25*prizeAmt).toFixed(2))
-    }
-    if(matchType==="4-match"){
-      return Number((0.35*prizeAmt).toFixed(2))
-    }
-    if(matchType==="5-match"){
-      return Number((0.4*prizeAmt).toFixed(2))
-    }
-  }
+
+
+  // const getPrizeWon = (matchType="", prizeAmt=0)=>{
+  //   if(matchType==="3-match"){
+  //     console.log("via DrawResultTable")
+  //     console.log((0.25*prizeAmt).toFixed(2))
+  //     return Number((0.25*prizeAmt).toFixed(2))
+  //   }
+  //   if(matchType==="4-match"){
+  //     console.log("via DrawResultTable")
+  //     console.log((0.25*prizeAmt).toFixed(2))
+  //     return Number((0.35*prizeAmt).toFixed(2))
+  //   }
+  //   if(matchType==="5-match"){
+  //     console.log("via DrawResultTable")
+  //     console.log((0.25*prizeAmt).toFixed(2))
+  //     return Number((0.4*prizeAmt).toFixed(2))
+  //   }
+  // }
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md shadow-lg">
@@ -93,8 +101,8 @@ export default function DrawResultTable({ drawNumbers, winners, type, status}) {
 
                 {/* Prize */}
                 <td className="whitespace-nowrap py-5 text-right text-sm font-bold text-emerald-400 md:text-base">
-                  $
-                  {getPrizeWon(winner?.matchType, winner?.prizeAmount)}
+                  {/* {getPrizeWon(winner?.matchType, winner?.prizeAmount)} */}
+                  ₹{Number(winner?.prizeAmount).toFixed(2)}
                 </td>
               </tr>
             ))}

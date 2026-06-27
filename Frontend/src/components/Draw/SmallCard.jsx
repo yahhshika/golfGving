@@ -55,7 +55,7 @@ export default function SmallCard({
       <h3
         className={`${textSize} font-bold transition-transform duration-300 group-hover:scale-110 ${color}`}
       >
-        {result}
+        {(result!=="-" && heading === "Roll Over")? "₹"+ result: result}
       </h3>
     </div>
   );

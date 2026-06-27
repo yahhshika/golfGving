@@ -64,14 +64,14 @@ export default function RecentResults({winners=[]}) {
             }
             {winners.map((winner,ind) => {
               
-              const prize =
-              winner?.matchType === "3-match"
-                ? 0.25 * winner.prizeAmount
-                : winner?.matchType === "4-match"
-                ? 0.35 * winner.prizeAmount
-                : winner?.matchType === "5-match"
-                ? 0.4 * winner.prizeAmount
-                : null;
+              // const prize =
+              // winner?.matchType === "3-match"
+              //   ? 0.25 * winner.prizeAmount
+              //   : winner?.matchType === "4-match"
+              //   ? 0.35 * winner.prizeAmount
+              //   : winner?.matchType === "5-match"
+              //   ? 0.4 * winner.prizeAmount
+              //   : null;
   
               return (
               <tr
@@ -93,11 +93,11 @@ export default function RecentResults({winners=[]}) {
                 </td>
 
                 <td className="px-6 py-5 text-gray-400 italic">
-                  {winner.matchType || "not known"}
+                  {winner?.matchType || "not known"}
                 </td>
 
                 <td className="px-6 py-5 text-right font-bold text-yellow-400">
-                  {prize !== null ? prize.toFixed(2) : "Not known"}
+                  {winner?.prizeAmount? "₹"+ Number(winner.prizeAmount).toFixed(2) : "Not known"}
                 </td>
 
               </tr>
